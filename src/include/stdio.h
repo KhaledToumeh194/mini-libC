@@ -1,13 +1,14 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 
 #ifndef __STDIO_H__
-#define __STDIO_H__	1
+#define __STDIO_H__ 1
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-
-/* TODO: Add puts() declaration. */
+    // NOLINTNEXTLINE(build/include_what_you_use)
+    int puts(const char *s);
 
 #ifdef __cplusplus
 }

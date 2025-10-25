@@ -7,15 +7,15 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#define makedev(x, y) ( \
-		(((x)&0xfffff000ULL) << 32) | \
-	(((x)&0x00000fffULL) << 8) | \
-		(((y)&0xffffff00ULL) << 12) | \
-	(((y)&0x000000ffULL)) \
-	)
+#define makedev(x, y) (             \
+	(((x) & 0xfffff000ULL) << 32) | \
+	(((x) & 0x00000fffULL) << 8) |  \
+	(((y) & 0xffffff00ULL) << 12) | \
+	(((y) & 0x000000ffULL)))
 
 /* Structure describing file characteristics as defined in linux/stat.h */
-struct statx {
+struct statx
+{
 	uint32_t stx_mask;
 	uint32_t stx_blksize;
 	uint64_t stx_attributes;
@@ -28,7 +28,8 @@ struct statx {
 	uint64_t stx_size;
 	uint64_t stx_blocks;
 	uint64_t stx_attributes_mask;
-	struct {
+	struct
+	{
 		int64_t tv_sec;
 		uint32_t tv_nsec;
 		int32_t pad;
@@ -43,11 +44,31 @@ struct statx {
 int fstatat_statx(int fd, const char *restrict path, struct stat *restrict st, int flag)
 {
 	/* TODO: Implement fstatat_statx(). Use statx and makedev above. */
-	return -1;
-}
+	struct statx sx;
+	long ret = syscall(__NR_statx, fd, path, flag, 0x00000fffU, &sx);
+	if (ret < 0)
+	{
+		errno = -ret;
+		return -1;
+	}
+	st->st_dev = makedev(sx.stx_dev_major, sx.stx_dev_minor);
+	st->st_ino = sx.stx_ino;
+	st->st_mode = sx.stx_mode;
+	st->st_nlink = sx.stx_nlink;
+	st->st_uid = sx.stx_uid;
+	st->st_gid = sx.stx_gid;
+	st->st_rdev = makedev(sx.stx_rdev_major, sx.stx_rdev_minor);
+	st->st_size = sx.stx_size;
+	st->st_blksize = sx.stx_blksize;
+	st->st_blocks = sx.stx_blocks;
+	st->st_atime = sx.stx_atime.tv_sec;
+	st->st_mtime = sx.stx_mtime.tv_sec;
+	st->st_ctime = sx.stx_ctime.tv_sec;
 
+	return 0;
+}
 int fstatat(int fd, const char *restrict path, struct stat *restrict st, int flag)
 {
 	/* TODO: Implement fstatat(). Use fstatat_statx(). */
-	return -1;
+	return fstatat_statx(fd, path, st, flag);
 }
