@@ -6,7 +6,6 @@
 #include <sys/types.h>
 int truncate(const char *path, off_t length)
 {
-	/* TODO: Implement truncate(). */
 	long ret = syscall(__NR_truncate, path, length);
 	if (ret < 0)
 	{

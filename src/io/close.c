@@ -7,7 +7,6 @@
 
 int close(int fd)
 {
-	/* TODO: Implement close(). */
 	long ret = syscall(__NR_close, fd);
 	if (ret < 0)
 	{

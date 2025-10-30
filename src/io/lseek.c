@@ -7,7 +7,6 @@
 
 off_t lseek(int fd, off_t offset, int whence)
 {
-	/* TODO: Implement lseek(). */
 	long ret = syscall(__NR_lseek, fd, offset, whence);
 	if (ret < 0)
 	{

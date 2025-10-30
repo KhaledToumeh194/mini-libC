@@ -7,6 +7,5 @@
 
 int stat(const char *restrict path, struct stat *restrict buf)
 {
-	/* TODO: Implement stat(). */
 	return fstatat(-100, path, buf, 0);
 }

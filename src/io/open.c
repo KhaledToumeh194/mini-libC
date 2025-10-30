@@ -7,7 +7,6 @@
 
 int open(const char *filename, int flags, ...)
 {
-	/* TODO: Implement open system call. */
 	int mode = 0;
 	if (flags & O_CREAT)
 	{
